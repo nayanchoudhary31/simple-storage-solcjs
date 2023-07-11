@@ -1,26 +1,35 @@
 const ethers = require("ethers");
 const fs = require("fs");
+require("dotenv").config();
 const main = async () => {
   // 1. Get The RPC From the Ganache
   // 2. Install Ethers and Set the Provider
   const provider = new ethers.providers.JsonRpcProvider(
-    "http://127.0.0.1:7575"
+    process.env.GANACHE_RPC_URL
   );
   // 3. Create the Wallet in order to deploy the Contracts
-  const wallet = new ethers.Wallet(
-    "82417c3add99de30c581fdd63387f7411842123eb9392f1d571558f4dfcf0b7d",
-    provider
-  );
+  const wallet = new ethers.Wallet(process.env.PRIVATE_KEY, provider);
   // 4. Get the ABI and Bytecode to deploy the contract
   const abi = fs.readFileSync("./SimpleStorage_sol_SimpleStorage.json", "utf8");
   const bin = fs.readFileSync("./SimpleStorage_sol_SimpleStorage.bin", "utf8");
+
+  // Encrypted Key For More Security
+  // Read for the encrypted key json
+  //   const encryptedKeyJSON = fs.readFileSync("./encryptKey.json", "utf8");
+  // Create the wallet from encrypted key json
+  //   let wallet = new ethers.Wallet.fromEncryptedJsonSync(
+  //     encryptedKeyJSON,
+  //     process.env.KEY_PASSWORD
+  //   );
+  // We need to tel the wallet about the proivder
+  //   wallet = await wallet.connect(provider);
   // 5. Create the contract factory object with ABI, Bytecode and Provider
   const contractFactory = new ethers.ContractFactory(abi, bin, wallet);
   console.log("Deploying the contract.....");
   // 6. Deploy the contract and await for the contract to be deployed
   const contract = await contractFactory.deploy();
   // Wait for the contract to be deployed for certain amount of block
-  const deploymentReceipt = await contract.deployTransaction.wait(1);
+  await contract.deployTransaction.wait(1);
   //   console.log(deploymentReceipt);
   //   console.log("Contract successfully Deployed", contract.address);
 
