@@ -5,7 +5,7 @@ const main = async () => {
   // 1. Get The RPC From the Ganache
   // 2. Install Ethers and Set the Provider
   const provider = new ethers.providers.JsonRpcProvider(
-    process.env.GANACHE_RPC_URL
+    process.env.ALCHEMY_KEY
   );
   // 3. Create the Wallet in order to deploy the Contracts
   const wallet = new ethers.Wallet(process.env.PRIVATE_KEY, provider);
@@ -31,7 +31,7 @@ const main = async () => {
   // Wait for the contract to be deployed for certain amount of block
   await contract.deployTransaction.wait(1);
   //   console.log(deploymentReceipt);
-  //   console.log("Contract successfully Deployed", contract.address);
+  console.log("Contract successfully Deployed", contract.address);
 
   // Create a Tx Object and send the trasaction
   //   let tx = {
